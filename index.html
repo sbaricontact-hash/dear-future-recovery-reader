@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Recovery Reader</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --surface: #1a2332;
+      --border: #2d3a4d;
+      --text: #e8eef5;
+      --muted: #8b9cb3;
+      --accent: #5b9fd4;
+      --accent-hover: #7ab8e8;
+      --error: #e07070;
+      --success: #6bc98a;
+      --warn: #d4a85b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      padding: 1.25rem;
+    }
+    .wrap {
+      max-width: 52rem;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0 0 0.75rem;
+      letter-spacing: -0.02em;
+    }
+    .intro, .security, .field-hint {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin: 0 0 1rem;
+    }
+    .field-hint {
+      font-size: 0.9rem;
+      margin: 0 0 0.5rem;
+      line-height: 1.45;
+    }
+    .security {
+      border-left: 3px solid var(--border);
+      padding-left: 0.85rem;
+      margin-top: 1.25rem;
+    }
+    .security ul {
+      margin: 0.35rem 0 0;
+      padding-left: 1.15rem;
+    }
+    .security li { margin: 0.25rem 0; }
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      margin-bottom: 0.35rem;
+    }
+    textarea, input[type="password"], input[type="text"] {
+      width: 100%;
+      padding: 0.65rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.9rem;
+      font-family: ui-monospace, "Cascadia Code", "Consolas", monospace;
+    }
+    textarea {
+      min-height: 9rem;
+      resize: vertical;
+    }
+    .field { margin-bottom: 1rem; }
+    .row-toggle {
+      margin: -0.5rem 0 1rem;
+      font-size: 0.85rem;
+    }
+    .row-toggle label {
+      display: inline;
+      text-transform: none;
+      font-weight: 400;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    button {
+      appearance: none;
+      border: none;
+      border-radius: 6px;
+      padding: 0.65rem 1.1rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: var(--accent);
+      color: #0a0e14;
+    }
+    button:hover { background: var(--accent-hover); }
+    button:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    button.btn-secondary {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    button.btn-secondary:hover {
+      background: var(--surface);
+      color: var(--text);
+      border-color: var(--muted);
+    }
+    button.btn-secondary:focus-visible {
+      outline: 2px solid var(--border);
+      outline-offset: 2px;
+    }
+    .actions {
+      margin-bottom: 1.25rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .panel {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.1rem;
+      background: var(--surface);
+      margin-bottom: 1rem;
+    }
+    .panel h2 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin: 0 0 0.75rem;
+      font-weight: 600;
+    }
+    .msg-out {
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 0.95rem;
+      margin: 0;
+    }
+    dl.meta {
+      margin: 0;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.35rem 1rem;
+      font-size: 0.9rem;
+    }
+    dl.meta dt {
+      color: var(--muted);
+      font-weight: 500;
+    }
+    dl.meta dd { margin: 0; font-family: ui-monospace, monospace; word-break: break-all; }
+    .match-yes { color: var(--success); font-weight: 600; }
+    .match-no { color: var(--error); font-weight: 600; }
+    .err {
+      color: var(--error);
+      background: rgba(224, 112, 112, 0.08);
+      border: 1px solid rgba(224, 112, 112, 0.35);
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+    .err[hidden] { display: none; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Recovery Reader</h1>
+    <p class="intro">
+      This tool runs locally in your browser and decrypts a preserved message using your recovery key.
+      Your recovery key is not sent anywhere.
+    </p>
+
+    <div class="field">
+      <p class="field-hint">
+        Open your Dear Future Recovery Kit file and copy the JSON between START_PRESERVED_PAYLOAD_JSON and END_PRESERVED_PAYLOAD_JSON into this box.
+      </p>
+      <label for="payload">Preserved payload JSON</label>
+      <textarea id="payload" spellcheck="false" autocomplete="off" placeholder='Paste the full preserved payload JSON…'></textarea>
+    </div>
+    <div class="field">
+      <label for="key">Recovery key</label>
+      <input type="password" id="key" autocomplete="off" spellcheck="false" placeholder="dfk_v1_…" />
+      <div class="row-toggle">
+        <input type="checkbox" id="showKey" />
+        <label for="showKey">Show recovery key</label>
+      </div>
+    </div>
+    <div class="actions">
+      <button type="button" id="decryptBtn">Decrypt locally</button>
+      <button type="button" id="clearBtn" class="btn-secondary">Clear fields</button>
+    </div>
+
+    <div id="errorBox" class="err" hidden role="alert"></div>
+
+    <div id="result" class="hidden">
+      <div class="panel">
+        <h2>Recovered message</h2>
+        <p id="messageText" class="msg-out"></p>
+      </div>
+      <div class="panel">
+        <h2>Metadata</h2>
+        <dl class="meta">
+          <dt>Message id</dt><dd id="outMessageId"></dd>
+          <dt>createdAtIso</dt><dd id="outCreatedAt"></dd>
+          <dt>visibility</dt><dd id="outVisibility"></dd>
+          <dt>revealAtIso</dt><dd id="outRevealAt"></dd>
+          <dt>contentHash (payload)</dt><dd id="outContentHash"></dd>
+          <dt>SHA-256 (plaintext)</dt><dd id="outSha256"></dd>
+          <dt>Hash match</dt><dd id="outHashMatch"></dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="security">
+      <strong>Important</strong>
+      <ul>
+        <li>This tool runs locally in your browser.</li>
+        <li>Your recovery key is not sent anywhere.</li>
+        <li>This page does not contact Dear Future or any server.</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+(function () {
+  "use strict";
+
+  var RECOVERY_PREFIX = "dfk_v1_";
+  var ENC_PREFIX = "dfenc_v2:";
+
+  function base64UrlToBytes(str) {
+    if (typeof str !== "string" || !str.length) {
+      throw new Error("Invalid base64url segment (empty).");
+    }
+    var base64 = str.replace(/-/g, "+").replace(/_/g, "/");
+    var pad = base64.length % 4;
+    if (pad) base64 += "====".slice(0, 4 - pad);
+    var binary;
+    try {
+      binary = atob(base64);
+    } catch (e) {
+      throw new Error("Invalid base64url encoding.");
+    }
+    var out = new Uint8Array(binary.length);
+    for (var i = 0; i < binary.length; i++) {
+      out[i] = binary.charCodeAt(i) & 0xff;
+    }
+    return out;
+  }
+
+  function bytesToHex(buf) {
+    var hex = [];
+    for (var i = 0; i < buf.byteLength; i++) {
+      hex.push(("0" + buf[i].toString(16)).slice(-2));
+    }
+    return hex.join("");
+  }
+
+  function normalizeHex(s) {
+    if (typeof s !== "string") return "";
+    var t = s.trim().toLowerCase();
+    if (/^[0-9a-f]+$/.test(t) && t.length % 2 === 0) return t;
+    return "";
+  }
+
+  function timingSafeEqualBytes(a, b) {
+    if (a.byteLength !== b.byteLength) return false;
+    var diff = 0;
+    for (var i = 0; i < a.byteLength; i++) diff |= a[i] ^ b[i];
+    return diff === 0;
+  }
+
+  function hexToBytes(hex) {
+    var len = hex.length / 2;
+    var out = new Uint8Array(len);
+    for (var i = 0; i < len; i++) {
+      out[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
+    }
+    return out;
+  }
+
+  function parseRecoveryKey(raw) {
+    if (typeof raw !== "string") throw new Error("Recovery key must be text.");
+    var keyStr = raw.trim();
+    if (!keyStr.startsWith(RECOVERY_PREFIX)) {
+      throw new Error('Recovery key must start with "' + RECOVERY_PREFIX + '".');
+    }
+    var b64 = keyStr.slice(RECOVERY_PREFIX.length);
+    var keyBytes = base64UrlToBytes(b64);
+    if (keyBytes.byteLength !== 32) {
+      throw new Error("Recovery key must decode to 32 bytes (AES-256).");
+    }
+    return keyBytes;
+  }
+
+  function parseEncryptedPayload(encryptedPayload) {
+    if (typeof encryptedPayload !== "string") {
+      throw new Error("encryptedPayload must be a string.");
+    }
+    var s = encryptedPayload.trim();
+    if (!s.startsWith(ENC_PREFIX)) {
+      throw new Error('encryptedPayload must start with "' + ENC_PREFIX + '".');
+    }
+    var rest = s.slice(ENC_PREFIX.length);
+    var parts = rest.split(":");
+    if (parts.length !== 3) {
+      throw new Error("encryptedPayload must have three segments after the prefix (iv:tag:ciphertext), all base64url.");
+    }
+    var iv = base64UrlToBytes(parts[0]);
+    var tag = base64UrlToBytes(parts[1]);
+    var ciphertext = base64UrlToBytes(parts[2]);
+    if (iv.byteLength === 0) throw new Error("IV is empty.");
+    if (tag.byteLength !== 16) throw new Error("Auth tag must be 16 bytes for AES-GCM.");
+    var combined = new Uint8Array(ciphertext.byteLength + tag.byteLength);
+    combined.set(ciphertext, 0);
+    combined.set(tag, ciphertext.byteLength);
+    return { iv: iv, ciphertextAndTag: combined };
+  }
+
+  function importAesGcmKey(keyBytes) {
+    return crypto.subtle.importKey("raw", keyBytes, { name: "AES-GCM" }, false, ["decrypt"]);
+  }
+
+  function compareContentHash(contentHashField, digestBuffer) {
+    if (contentHashField == null) {
+      return { match: false, reason: "missing", display: "(missing in payload)" };
+    }
+    var ch = String(contentHashField).trim();
+    if (!ch) {
+      return { match: false, reason: "empty", display: "(empty)" };
+    }
+    var digestHex = bytesToHex(new Uint8Array(digestBuffer));
+
+    var normHex = normalizeHex(ch);
+    if (normHex && normHex.length === 64) {
+      try {
+        var expected = hexToBytes(normHex);
+        if (timingSafeEqualBytes(new Uint8Array(digestBuffer), expected)) {
+          return { match: true, reason: "hex", display: digestHex };
+        }
+      } catch (e) { /* fall through */ }
+    }
+
+    try {
+      var asB64 = base64UrlToBytes(ch);
+      if (asB64.byteLength === 32 && timingSafeEqualBytes(new Uint8Array(digestBuffer), asB64)) {
+        return { match: true, reason: "base64url", display: digestHex };
+      }
+    } catch (e) { /* ignore */ }
+
+    if (ch.length === 64 && /^[0-9a-fA-F]+$/.test(ch)) {
+      return { match: false, reason: "hex_mismatch", display: digestHex };
+    }
+
+    return { match: false, reason: "format_or_mismatch", display: digestHex };
+  }
+
+  function safeErrorMessage(err) {
+    if (err && typeof err.message === "string") return err.message;
+    return "Decryption failed.";
+  }
+
+  var payloadEl = document.getElementById("payload");
+  var keyEl = document.getElementById("key");
+  var showKeyEl = document.getElementById("showKey");
+  var decryptBtn = document.getElementById("decryptBtn");
+  var clearBtn = document.getElementById("clearBtn");
+  var errorBox = document.getElementById("errorBox");
+  var resultEl = document.getElementById("result");
+  var messageTextEl = document.getElementById("messageText");
+  var outMessageId = document.getElementById("outMessageId");
+  var outCreatedAt = document.getElementById("outCreatedAt");
+  var outVisibility = document.getElementById("outVisibility");
+  var outRevealAt = document.getElementById("outRevealAt");
+  var outContentHash = document.getElementById("outContentHash");
+  var outSha256 = document.getElementById("outSha256");
+  var outHashMatch = document.getElementById("outHashMatch");
+
+  showKeyEl.addEventListener("change", function () {
+    keyEl.type = showKeyEl.checked ? "text" : "password";
+  });
+
+  function setError(msg) {
+    errorBox.textContent = msg;
+    errorBox.hidden = !msg;
+  }
+
+  function clearOutputs() {
+    resultEl.classList.add("hidden");
+    messageTextEl.textContent = "";
+    outMessageId.textContent = "";
+    outCreatedAt.textContent = "";
+    outVisibility.textContent = "";
+    outRevealAt.textContent = "";
+    outContentHash.textContent = "";
+    outSha256.textContent = "";
+    outHashMatch.textContent = "";
+    outHashMatch.className = "";
+  }
+
+  function clearAllFields() {
+    payloadEl.value = "";
+    keyEl.value = "";
+    showKeyEl.checked = false;
+    keyEl.type = "password";
+    setError("");
+    clearOutputs();
+  }
+
+  decryptBtn.addEventListener("click", function () {
+    setError("");
+    clearOutputs();
+
+    var payloadText = payloadEl.value.trim();
+    var keyRaw = keyEl.value;
+
+    if (!payloadText) {
+      setError("Paste the preserved payload JSON.");
+      return;
+    }
+    if (!keyRaw.trim()) {
+      setError("Enter your recovery key.");
+      return;
+    }
+
+    var data;
+    try {
+      data = JSON.parse(payloadText);
+    } catch (e) {
+      setError("Invalid JSON: " + safeErrorMessage(e));
+      return;
+    }
+
+    if (!data || typeof data !== "object") {
+      setError("Payload must be a JSON object.");
+      return;
+    }
+
+    if (data.app !== "dear-future") {
+      setError('Unexpected app field; expected "dear-future".');
+      return;
+    }
+
+    if (data.protocolVersion !== 1) {
+      setError("Unsupported protocolVersion. This reader supports protocolVersion 1.");
+      return;
+    }
+
+    var enc = data.encryptedPayload;
+    try {
+      var keyBytes = parseRecoveryKey(keyRaw);
+      var parsed = parseEncryptedPayload(enc);
+
+      importAesGcmKey(keyBytes).then(function (cryptoKey) {
+        return crypto.subtle.decrypt(
+          { name: "AES-GCM", iv: parsed.iv },
+          cryptoKey,
+          parsed.ciphertextAndTag
+        );
+      }).then(function (plainBuf) {
+        var plaintext = new TextDecoder("utf-8", { fatal: true }).decode(plainBuf);
+        return crypto.subtle.digest("SHA-256", new TextEncoder().encode(plaintext)).then(function (digest) {
+          return { plaintext: plaintext, digest: digest };
+        });
+      }).then(function (res) {
+        var cmp = compareContentHash(data.contentHash, res.digest);
+        var shaHex = bytesToHex(new Uint8Array(res.digest));
+
+        messageTextEl.textContent = res.plaintext;
+        outMessageId.textContent = data.messageId != null ? String(data.messageId) : "—";
+        outCreatedAt.textContent = data.createdAtIso != null ? String(data.createdAtIso) : "—";
+        outVisibility.textContent = data.visibility != null ? String(data.visibility) : "—";
+        outRevealAt.textContent =
+          data.revealAtIso === null || data.revealAtIso === undefined
+            ? "null"
+            : String(data.revealAtIso);
+        outContentHash.textContent =
+          data.contentHash != null && String(data.contentHash).trim() !== ""
+            ? String(data.contentHash)
+            : "—";
+        outSha256.textContent = shaHex;
+
+        outHashMatch.textContent = cmp.match
+          ? "Yes — recovered text matches the preserved fingerprint."
+          : "No — recovered text does not match the preserved fingerprint.";
+        outHashMatch.className = cmp.match ? "match-yes" : "match-no";
+
+        resultEl.classList.remove("hidden");
+      }).catch(function (e) {
+        var msg = safeErrorMessage(e);
+        if (/OperationError|decrypt/i.test(String(e && e.name))) {
+          msg = "Decryption failed. Check your recovery key and that the payload matches this key.";
+        }
+        setError(msg);
+      });
+    } catch (e) {
+      setError(safeErrorMessage(e));
+    }
+  });
+
+  clearBtn.addEventListener("click", function () {
+    clearAllFields();
+  });
+})();
+  </script>
+</body>
+</html>
