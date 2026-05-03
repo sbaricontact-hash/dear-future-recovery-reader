@@ -3,236 +3,387 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Recovery Reader</title>
+  <title>Dear Future · Recovery Reader</title>
   <style>
     :root {
-      --bg: #0f1419;
-      --surface: #1a2332;
-      --border: #2d3a4d;
-      --text: #e8eef5;
-      --muted: #8b9cb3;
-      --accent: #5b9fd4;
-      --accent-hover: #7ab8e8;
-      --error: #e07070;
-      --success: #6bc98a;
-      --warn: #d4a85b;
+      --bg-top: #eef0fb;
+      --bg-bottom: #e4e9f9;
+      --card: #ffffff;
+      --card-inner: #faf9ff;
+      --text: #1e1635;
+      --muted: #5c5678;
+      --border: #e4dff0;
+      --border-soft: #ebe7f5;
+      --accent: #6d4bd6;
+      --accent-hover: #5a3ac4;
+      --accent-soft: rgba(109, 75, 214, 0.1);
+      --pill-bg: #ffffff;
+      --pill-border: #dcd6f0;
+      --error: #b42318;
+      --error-bg: #fef2f2;
+      --error-border: #fecdca;
+      --success: #15803d;
+      --shadow: 0 1px 2px rgba(30, 22, 53, 0.04), 0 8px 24px rgba(76, 58, 120, 0.08);
+      --radius: 14px;
+      --radius-sm: 10px;
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       min-height: 100vh;
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, sans-serif;
-      background: var(--bg);
+      background: linear-gradient(165deg, var(--bg-top) 0%, var(--bg-bottom) 55%, #dde4f8 100%);
       color: var(--text);
-      line-height: 1.55;
-      padding: 1.25rem;
+      line-height: 1.6;
+      padding: 1.5rem 1.25rem 2.5rem;
     }
     .wrap {
-      max-width: 52rem;
+      max-width: 58rem;
       margin: 0 auto;
     }
-    h1 {
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin: 0 0 0.75rem;
-      letter-spacing: -0.02em;
+    .page-header {
+      text-align: center;
+      margin-bottom: 2rem;
+      max-width: 36rem;
+      margin-left: auto;
+      margin-right: auto;
     }
-    .intro, .security, .field-hint {
-      color: var(--muted);
-      font-size: 0.95rem;
-      margin: 0 0 1rem;
-    }
-    .field-hint {
-      font-size: 0.9rem;
-      margin: 0 0 0.5rem;
-      line-height: 1.45;
-    }
-    .security {
-      border-left: 3px solid var(--border);
-      padding-left: 0.85rem;
-      margin-top: 1.25rem;
-    }
-    .security ul {
-      margin: 0.35rem 0 0;
-      padding-left: 1.15rem;
-    }
-    .security li { margin: 0.25rem 0; }
-    label {
-      display: block;
+    .brand-pill {
+      display: inline-block;
       font-size: 0.8rem;
       font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.02em;
+      color: var(--accent);
+      background: var(--pill-bg);
+      border: 1px solid var(--pill-border);
+      padding: 0.35rem 0.9rem;
+      border-radius: 999px;
+      margin: 0 0 1rem;
+      box-shadow: 0 1px 2px rgba(30, 22, 53, 0.06);
+    }
+    h1 {
+      font-size: clamp(1.35rem, 2.8vw, 1.75rem);
+      font-weight: 650;
+      margin: 0 0 0.85rem;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      line-height: 1.25;
+    }
+    .intro {
       color: var(--muted);
-      margin-bottom: 0.35rem;
+      font-size: 1rem;
+      margin: 0;
+      line-height: 1.65;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
+      gap: 1.25rem 1.5rem;
+      align-items: start;
+    }
+    @media (max-width: 800px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+      .layout-aside { order: -1; }
+    }
+    .layout-main {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      min-width: 0;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.35rem 1.5rem;
+      box-shadow: var(--shadow);
+    }
+    .card-form { padding-bottom: 1.5rem; }
+    .card-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin: 0 0 1rem;
+    }
+    .card-important .card-title { margin-bottom: 0.65rem; }
+    .field { margin-bottom: 1.35rem; }
+    .field:last-of-type { margin-bottom: 0; }
+    .field-key {
+      margin-top: 0.25rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border-soft);
+    }
+    .field-hint, .field-help {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin: 0 0 0.65rem;
+      line-height: 1.5;
+    }
+    .field-help { margin-bottom: 0.75rem; }
+    label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #433c5c;
+      margin-bottom: 0.45rem;
     }
     textarea, input[type="password"], input[type="text"] {
       width: 100%;
-      padding: 0.65rem 0.75rem;
+      padding: 0.75rem 0.85rem;
       border: 1px solid var(--border);
-      border-radius: 6px;
-      background: var(--surface);
+      border-radius: var(--radius-sm);
+      background: var(--card-inner);
       color: var(--text);
-      font-size: 0.9rem;
+      font-size: 0.875rem;
       font-family: ui-monospace, "Cascadia Code", "Consolas", monospace;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    textarea:focus, input[type="password"]:focus, input[type="text"]:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
     }
     textarea {
-      min-height: 9rem;
+      min-height: 10rem;
       resize: vertical;
     }
-    .field { margin-bottom: 1rem; }
     .row-toggle {
-      margin: -0.5rem 0 1rem;
-      font-size: 0.85rem;
+      margin-top: 0.75rem;
+      font-size: 0.875rem;
     }
+    .row-toggle input { vertical-align: middle; }
     .row-toggle label {
       display: inline;
       text-transform: none;
-      font-weight: 400;
+      font-weight: 500;
+      letter-spacing: 0;
+      font-size: 0.875rem;
       color: var(--muted);
       cursor: pointer;
+      margin: 0;
+    }
+    .actions {
+      margin-top: 1.5rem;
+      padding-top: 1.35rem;
+      border-top: 1px solid var(--border-soft);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      align-items: center;
     }
     button {
       appearance: none;
       border: none;
-      border-radius: 6px;
-      padding: 0.65rem 1.1rem;
+      border-radius: var(--radius-sm);
+      padding: 0.7rem 1.25rem;
       font-size: 0.95rem;
       font-weight: 600;
       cursor: pointer;
       background: var(--accent);
-      color: #0a0e14;
+      color: #ffffff;
+      box-shadow: 0 1px 2px rgba(90, 58, 196, 0.2);
+      transition: background 0.15s ease, transform 0.1s ease;
     }
     button:hover { background: var(--accent-hover); }
+    button:active { transform: translateY(1px); }
     button:focus-visible {
       outline: 2px solid var(--accent);
-      outline-offset: 2px;
+      outline-offset: 3px;
     }
     button.btn-secondary {
-      background: transparent;
-      color: var(--muted);
+      background: var(--card);
+      color: var(--accent);
       border: 1px solid var(--border);
+      box-shadow: none;
     }
     button.btn-secondary:hover {
-      background: var(--surface);
-      color: var(--text);
-      border-color: var(--muted);
+      background: var(--card-inner);
+      border-color: #c9c0e8;
+      color: var(--accent-hover);
     }
     button.btn-secondary:focus-visible {
-      outline: 2px solid var(--border);
-      outline-offset: 2px;
+      outline-color: var(--muted);
     }
-    .actions {
-      margin-bottom: 1.25rem;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      align-items: center;
+    .err {
+      color: var(--error);
+      background: var(--error-bg);
+      border: 1px solid var(--error-border);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem 1rem;
+      font-size: 0.9rem;
+      margin-top: 1.25rem;
+    }
+    .err[hidden] { display: none; }
+    .hidden { display: none !important; }
+    #result:not(.hidden) {
+      margin-top: 1.35rem;
+      padding-top: 1.35rem;
+      border-top: 1px solid var(--border-soft);
     }
     .panel {
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1rem 1.1rem;
-      background: var(--surface);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-sm);
+      padding: 1.1rem 1.2rem;
+      background: var(--card-inner);
       margin-bottom: 1rem;
     }
+    .panel:last-child { margin-bottom: 0; }
     .panel h2 {
-      font-size: 0.85rem;
+      font-size: 0.72rem;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.07em;
       color: var(--muted);
-      margin: 0 0 0.75rem;
-      font-weight: 600;
+      margin: 0 0 0.85rem;
+      font-weight: 700;
     }
     .msg-out {
       white-space: pre-wrap;
       word-break: break-word;
       font-size: 0.95rem;
       margin: 0;
+      color: var(--text);
     }
     dl.meta {
       margin: 0;
       display: grid;
       grid-template-columns: auto 1fr;
-      gap: 0.35rem 1rem;
-      font-size: 0.9rem;
+      gap: 0.4rem 1rem;
+      font-size: 0.875rem;
     }
     dl.meta dt {
       color: var(--muted);
-      font-weight: 500;
+      font-weight: 600;
     }
-    dl.meta dd { margin: 0; font-family: ui-monospace, monospace; word-break: break-all; }
+    dl.meta dd { margin: 0; font-family: ui-monospace, monospace; word-break: break-all; color: var(--text); }
     .match-yes { color: var(--success); font-weight: 600; }
     .match-no { color: var(--error); font-weight: 600; }
-    .err {
-      color: var(--error);
-      background: rgba(224, 112, 112, 0.08);
-      border: 1px solid rgba(224, 112, 112, 0.35);
-      border-radius: 8px;
-      padding: 0.85rem 1rem;
-      font-size: 0.9rem;
-      margin-bottom: 1rem;
+    .card-important {
+      padding: 1.25rem 1.5rem;
     }
-    .err[hidden] { display: none; }
-    .hidden { display: none !important; }
+    .security-list {
+      margin: 0;
+      padding-left: 1.2rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .security-list li { margin: 0.4rem 0; padding-left: 0.15rem; }
+    .layout-aside { min-width: 0; }
+    .card-steps .card-title { margin-bottom: 1.1rem; }
+    .steps-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      counter-reset: steps;
+    }
+    .steps-list li {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+      margin: 0 0 1rem;
+      font-size: 0.9rem;
+      color: var(--text);
+      line-height: 1.45;
+    }
+    .steps-list li:last-child { margin-bottom: 0; }
+    .step-num {
+      flex-shrink: 0;
+      width: 1.65rem;
+      height: 1.65rem;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 0.05rem;
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>Recovery Reader</h1>
-    <p class="intro">
-      This tool runs locally in your browser and decrypts a preserved message using your recovery key.
-      Your recovery key is not sent anywhere.
-    </p>
-
-    <div class="field">
-      <p class="field-hint">
-        Open your Dear Future Recovery Kit file and copy the JSON between START_PRESERVED_PAYLOAD_JSON and END_PRESERVED_PAYLOAD_JSON into this box.
+    <header class="page-header">
+      <p class="brand-pill">Dear Future · Recovery Reader</p>
+      <h1>Recover your preserved message locally</h1>
+      <p class="intro">
+        This standalone reader helps you decrypt a Dear Future preserved message entirely in your browser. It does not depend on the Dear Future app being online.
       </p>
-      <label for="payload">Preserved payload JSON</label>
-      <textarea id="payload" spellcheck="false" autocomplete="off" placeholder='Paste the full preserved payload JSON…'></textarea>
-    </div>
-    <div class="field">
-      <label for="key">Recovery key</label>
-      <input type="password" id="key" autocomplete="off" spellcheck="false" placeholder="dfk_v1_…" />
-      <div class="row-toggle">
-        <input type="checkbox" id="showKey" />
-        <label for="showKey">Show recovery key</label>
-      </div>
-    </div>
-    <div class="actions">
-      <button type="button" id="decryptBtn">Decrypt locally</button>
-      <button type="button" id="clearBtn" class="btn-secondary">Clear fields</button>
-    </div>
+    </header>
 
-    <div id="errorBox" class="err" hidden role="alert"></div>
+    <div class="layout">
+      <div class="layout-main">
+        <section class="card card-form">
+          <div class="field">
+            <p class="field-hint">
+              Open your Dear Future Recovery Kit file and copy the JSON between START_PRESERVED_PAYLOAD_JSON and END_PRESERVED_PAYLOAD_JSON into this box.
+            </p>
+            <label for="payload">Preserved payload JSON</label>
+            <textarea id="payload" spellcheck="false" autocomplete="off" placeholder='Paste the full preserved payload JSON…'></textarea>
+          </div>
+          <div class="field field-key">
+            <label for="key">Recovery key</label>
+            <p class="field-help">Paste the recovery key exactly as shown in your recovery kit file. It usually starts with dfk_v1_.</p>
+            <input type="password" id="key" autocomplete="off" spellcheck="false" placeholder="dfk_v1_…" />
+            <div class="row-toggle">
+              <input type="checkbox" id="showKey" />
+              <label for="showKey">Show recovery key</label>
+            </div>
+          </div>
+          <div class="actions">
+            <button type="button" id="decryptBtn">Decrypt locally</button>
+            <button type="button" id="clearBtn" class="btn-secondary">Clear fields</button>
+          </div>
 
-    <div id="result" class="hidden">
-      <div class="panel">
-        <h2>Recovered message</h2>
-        <p id="messageText" class="msg-out"></p>
-      </div>
-      <div class="panel">
-        <h2>Metadata</h2>
-        <dl class="meta">
-          <dt>Message id</dt><dd id="outMessageId"></dd>
-          <dt>createdAtIso</dt><dd id="outCreatedAt"></dd>
-          <dt>visibility</dt><dd id="outVisibility"></dd>
-          <dt>revealAtIso</dt><dd id="outRevealAt"></dd>
-          <dt>contentHash (payload)</dt><dd id="outContentHash"></dd>
-          <dt>SHA-256 (plaintext)</dt><dd id="outSha256"></dd>
-          <dt>Hash match</dt><dd id="outHashMatch"></dd>
-        </dl>
-      </div>
-    </div>
+          <div id="errorBox" class="err" hidden role="alert"></div>
 
-    <div class="security">
-      <strong>Important</strong>
-      <ul>
-        <li>This tool runs locally in your browser.</li>
-        <li>Your recovery key is not sent anywhere.</li>
-        <li>This page does not contact Dear Future or any server.</li>
-      </ul>
+          <div id="result" class="hidden">
+            <div class="panel">
+              <h2>Recovered message</h2>
+              <p id="messageText" class="msg-out"></p>
+            </div>
+            <div class="panel">
+              <h2>Metadata</h2>
+              <dl class="meta">
+                <dt>Message id</dt><dd id="outMessageId"></dd>
+                <dt>createdAtIso</dt><dd id="outCreatedAt"></dd>
+                <dt>visibility</dt><dd id="outVisibility"></dd>
+                <dt>revealAtIso</dt><dd id="outRevealAt"></dd>
+                <dt>contentHash (payload)</dt><dd id="outContentHash"></dd>
+                <dt>SHA-256 (plaintext)</dt><dd id="outSha256"></dd>
+                <dt>Hash match</dt><dd id="outHashMatch"></dd>
+              </dl>
+            </div>
+          </div>
+        </section>
+
+        <section class="card card-important" aria-labelledby="important-heading">
+          <h2 class="card-title" id="important-heading">Important</h2>
+          <ul class="security-list">
+            <li>This tool runs locally in your browser.</li>
+            <li>Your recovery key is not sent anywhere.</li>
+            <li>This page does not contact Dear Future or any server.</li>
+            <li>Use only on a computer you trust.</li>
+          </ul>
+        </section>
+      </div>
+
+      <aside class="layout-aside">
+        <section class="card card-steps" aria-labelledby="steps-heading">
+          <h2 class="card-title" id="steps-heading">Quick steps</h2>
+          <ul class="steps-list">
+            <li><span class="step-num" aria-hidden="true">1</span> Copy the preserved payload JSON</li>
+            <li><span class="step-num" aria-hidden="true">2</span> Copy your recovery key</li>
+            <li><span class="step-num" aria-hidden="true">3</span> Click Decrypt locally</li>
+          </ul>
+        </section>
+      </aside>
     </div>
   </div>
 
