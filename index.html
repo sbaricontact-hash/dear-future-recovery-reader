@@ -313,7 +313,7 @@
       <p class="brand-pill">Dear Future · Recovery Reader</p>
       <h1>Recover your preserved message locally</h1>
       <p class="intro">
-        This standalone reader helps you decrypt a Dear Future preserved message entirely in your browser. It does not depend on the Dear Future app being online.
+        This standalone reader helps you decrypt a Dear Future preserved message or letter entirely in your browser. It does not depend on the Dear Future app being online.
       </p>
     </header>
 
@@ -344,8 +344,21 @@
           <div id="errorBox" class="err" hidden role="alert"></div>
 
           <div id="result" class="hidden">
+            <div id="letterContextPanel" class="panel hidden">
+              <h2>Recovered letter details</h2>
+              <dl class="meta">
+                <dt>Title</dt><dd id="outBundleTitle"></dd>
+                <dt>Recipient</dt><dd id="outBundleRecipient"></dd>
+                <dt>Author</dt><dd id="outBundleAuthor"></dd>
+                <dt>Occasion</dt><dd id="outBundleOccasion"></dd>
+                <dt>Dedication</dt><dd id="outBundleDedication"></dd>
+                <dt>Visibility</dt><dd id="outBundleVisibility"></dd>
+                <dt>Reveal date</dt><dd id="outBundleRevealAt"></dd>
+                <dt>Created date</dt><dd id="outBundleCreatedAt"></dd>
+              </dl>
+            </div>
             <div class="panel">
-              <h2>Recovered message</h2>
+              <h2 id="messagePanelHeading">Recovered message</h2>
               <p id="messageText" class="msg-out"></p>
             </div>
             <div class="panel">
@@ -355,8 +368,8 @@
                 <dt>createdAtIso</dt><dd id="outCreatedAt"></dd>
                 <dt>visibility</dt><dd id="outVisibility"></dd>
                 <dt>revealAtIso</dt><dd id="outRevealAt"></dd>
-                <dt>contentHash (payload)</dt><dd id="outContentHash"></dd>
-                <dt>SHA-256 (plaintext)</dt><dd id="outSha256"></dd>
+                <dt>contentHash</dt><dd id="outContentHash"></dd>
+                <dt>SHA-256 of decrypted data</dt><dd id="outSha256"></dd>
                 <dt>Hash match</dt><dd id="outHashMatch"></dd>
               </dl>
             </div>
@@ -526,6 +539,29 @@
     return "Decryption failed.";
   }
 
+  function displayOrDash(value) {
+    if (value === null || value === undefined) return "—";
+    var s = String(value).trim();
+    return s ? s : "—";
+  }
+
+  function parseDearFutureLetterBundle(raw) {
+    if (typeof raw !== "string") return null;
+    var s = raw.trim();
+    if (!s || s.charAt(0) !== "{") return null;
+    try {
+      var parsed = JSON.parse(s);
+      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return null;
+      if (parsed.format !== "dear-future-letter-v1") return null;
+      if (typeof parsed.body !== "string") return null;
+      if (typeof parsed.visibility !== "string") return null;
+      if (typeof parsed.createdAtIso !== "string") return null;
+      return parsed;
+    } catch (e) {
+      return null;
+    }
+  }
+
   var payloadEl = document.getElementById("payload");
   var keyEl = document.getElementById("key");
   var showKeyEl = document.getElementById("showKey");
@@ -533,6 +569,16 @@
   var clearBtn = document.getElementById("clearBtn");
   var errorBox = document.getElementById("errorBox");
   var resultEl = document.getElementById("result");
+  var messagePanelHeading = document.getElementById("messagePanelHeading");
+  var letterContextPanel = document.getElementById("letterContextPanel");
+  var outBundleTitle = document.getElementById("outBundleTitle");
+  var outBundleRecipient = document.getElementById("outBundleRecipient");
+  var outBundleAuthor = document.getElementById("outBundleAuthor");
+  var outBundleOccasion = document.getElementById("outBundleOccasion");
+  var outBundleDedication = document.getElementById("outBundleDedication");
+  var outBundleVisibility = document.getElementById("outBundleVisibility");
+  var outBundleRevealAt = document.getElementById("outBundleRevealAt");
+  var outBundleCreatedAt = document.getElementById("outBundleCreatedAt");
   var messageTextEl = document.getElementById("messageText");
   var outMessageId = document.getElementById("outMessageId");
   var outCreatedAt = document.getElementById("outCreatedAt");
@@ -553,6 +599,16 @@
 
   function clearOutputs() {
     resultEl.classList.add("hidden");
+    letterContextPanel.classList.add("hidden");
+    outBundleTitle.textContent = "";
+    outBundleRecipient.textContent = "";
+    outBundleAuthor.textContent = "";
+    outBundleOccasion.textContent = "";
+    outBundleDedication.textContent = "";
+    outBundleVisibility.textContent = "";
+    outBundleRevealAt.textContent = "";
+    outBundleCreatedAt.textContent = "";
+    messagePanelHeading.textContent = "Recovered message";
     messageTextEl.textContent = "";
     outMessageId.textContent = "";
     outCreatedAt.textContent = "";
@@ -631,8 +687,26 @@
       }).then(function (res) {
         var cmp = compareContentHash(data.contentHash, res.digest);
         var shaHex = bytesToHex(new Uint8Array(res.digest));
+        var bundle = parseDearFutureLetterBundle(res.plaintext);
 
-        messageTextEl.textContent = res.plaintext;
+        if (bundle) {
+          messagePanelHeading.textContent = "Message";
+          messageTextEl.textContent = bundle.body;
+          outBundleTitle.textContent = displayOrDash(bundle.title);
+          outBundleRecipient.textContent = displayOrDash(bundle.recipientName);
+          outBundleAuthor.textContent = displayOrDash(bundle.authorName);
+          outBundleOccasion.textContent = displayOrDash(bundle.occasion);
+          outBundleDedication.textContent = displayOrDash(bundle.dedication);
+          outBundleVisibility.textContent = displayOrDash(bundle.visibility);
+          outBundleRevealAt.textContent = displayOrDash(bundle.revealAtIso);
+          outBundleCreatedAt.textContent = displayOrDash(bundle.createdAtIso);
+          letterContextPanel.classList.remove("hidden");
+        } else {
+          messagePanelHeading.textContent = "Recovered message";
+          messageTextEl.textContent = res.plaintext;
+          letterContextPanel.classList.add("hidden");
+        }
+
         outMessageId.textContent = data.messageId != null ? String(data.messageId) : "—";
         outCreatedAt.textContent = data.createdAtIso != null ? String(data.createdAtIso) : "—";
         outVisibility.textContent = data.visibility != null ? String(data.visibility) : "—";
@@ -647,8 +721,8 @@
         outSha256.textContent = shaHex;
 
         outHashMatch.textContent = cmp.match
-          ? "Yes — recovered text matches the preserved fingerprint."
-          : "No — recovered text does not match the preserved fingerprint.";
+          ? "Yes — decrypted data matches the preserved fingerprint."
+          : "No — decrypted data does not match the preserved fingerprint.";
         outHashMatch.className = cmp.match ? "match-yes" : "match-no";
 
         resultEl.classList.remove("hidden");
