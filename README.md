@@ -1,68 +1,61 @@
-# Recovery Reader (Dear Future v2)
+# Dear Future Recovery Reader
 
-A **standalone static page** that decrypts **Dear Future** preserved messages **only in your browser**, using the Web Crypto API. It does not talk to Dear Future, Supabase, Vercel, Stripe, Next.js, React, Node, or any other backend.
+A standalone page that helps you recover a Dear Future preserved message using your **Recovery Kit** and **recovery key**.
 
-## What it does
+It runs locally in your browser. It does not contact Dear Future, Supabase, Vercel, Stripe, Next.js, React, Node, or any other backend.
 
-`index.html` is a single file containing HTML, CSS, and JavaScript. You paste:
+## What it is for
 
-1. **Preserved payload JSON** — usually copied from your **Dear Future Recovery Kit** `.txt` file (the JSON between `START_PRESERVED_PAYLOAD_JSON` and `END_PRESERVED_PAYLOAD_JSON`), i.e. the object that includes `encryptedPayload`, `messageId`, `contentHash`, etc.
-2. **Recovery key** — in the form `dfk_v1_<base64url-32-byte-key>` (also provided in the recovery kit file).
+Dear Future gives you a Recovery Kit so your preserved message is not only tied to your account.
 
-When you click **Decrypt locally**, the page:
+This reader lets you:
 
-- Parses the JSON and the `dfenc_v2:<iv>:<tag>:<ciphertext>` string
-- Derives an AES-GCM key from the recovery key material
-- Decrypts with AES-GCM (ciphertext and auth tag concatenated for `crypto.subtle.decrypt`, as required by the Web Crypto API)
-- Decodes plaintext as UTF-8
-- Computes **SHA-256** of the plaintext and compares it to `contentHash` from the payload (with sensible normalization for hex; other encodings may show “No” until aligned with the app’s exact format)
+1. Open the Recovery Reader.
+2. Choose or paste your Recovery Kit.
+3. Enter your recovery key if needed.
+4. Recover your message.
+5. Check whether the recovered message matches the saved proof code.
 
-All processing stays on your machine in the browser tab.
+## What you need
+
+You need the Recovery Kit you downloaded from your private Dear Future receipt page.
+
+The Recovery Kit may include:
+
+- your recovery key
+- your preserved record
+- your message proof code
+- your message id
+- your preservation references
+
+The Recovery Kit is private. Keep it somewhere safe and do not share it unless you want someone else to be able to recover the message.
 
 ## How to use it
 
-1. Save or clone this folder and open `index.html` in a modern browser (Chrome, Firefox, Edge, Safari). You can open it **directly from disk** (`file://`) or host it as a static file; no build step or server is required for decryption logic.
-2. Open your **Dear Future Recovery Kit** `.txt` file.
-3. Copy the JSON block between `START_PRESERVED_PAYLOAD_JSON` and `END_PRESERVED_PAYLOAD_JSON`.
-4. Paste it into the **Preserved payload JSON** box.
-5. Copy the `dfk_v1_…` **recovery key** from the kit file into the **Recovery key** box.
-6. Click **Decrypt locally**.
+1. Open `index.html` in a modern browser such as Chrome, Edge, Firefox, or Safari.
+2. Choose your Dear Future Recovery Kit `.txt` file.
+3. If the fields are not filled automatically, open the Recovery Kit and paste the preserved record into the page manually.
+4. Check that your recovery key is filled in.
+5. Click **Recover message**.
+6. Look for **Match confirmed**.
 
-If something is wrong (bad JSON, wrong key, wrong payload format), an error message is shown at the top of the form. Recovery keys are **not** written to the console.
+If the reader says **Match confirmed**, it means the recovered message matches the saved proof code from the kit.
 
-## What data you need
+If the match is not confirmed, check that you used the correct Recovery Kit and recovery key together.
 
-1. **Preserved payload JSON** — typically what you received or exported from Code-In / your preservation flow, shaped like:
+## Does it send my key anywhere?
 
-```json
-{
-  "app": "dear-future",
-  "protocolVersion": 1,
-  "messageId": "…",
-  "contentHash": "…",
-  "encryptedPayload": "dfenc_v2:…",
-  "visibility": "…",
-  "revealAtIso": null,
-  "pricingTier": "…",
-  "receiptMetadata": {},
-  "createdAtIso": "…"
-}
-```
+No.
 
-2. **Recovery key** — the `dfk_v1_…` string that was generated for that message.
+This reader is designed to run locally in your browser. Your recovery key and recovered message are not sent to Dear Future or any server.
 
-The recovery kit file itself is sensitive because it contains both the recovery key and the encrypted payload.
+You should still only use the reader on a device you trust.
 
-This first version requires the preserved payload JSON. A transaction hash alone is not enough unless a future lookup feature or gateway fetch is added.
+## What the match result means
 
-## First version: manual paste only
+The Recovery Reader checks the recovered message against the saved message proof code.
 
-This version **does not** fetch payloads by transaction hash, order id, or URL. You must paste the JSON yourself.
+If it says:
 
-**Possible later enhancement:** resolve a payload (or ciphertext bundle) via an **IQ / Code-In gateway** using a transaction hash or similar identifier, then feed the same decrypt path. That would add a deliberate network step and should be optional and clearly labeled when added.
-
-## Security notes
-
-- Use a **trusted device**.
-- Anyone with **both** the preserved payload and the **recovery key** can decrypt the message offline.
-- This README and `index.html` describe a tool that **does not contact Dear Future or any server** in this first version.
+```txt
+Match confirmed

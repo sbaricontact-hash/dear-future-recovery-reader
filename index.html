@@ -23,11 +23,15 @@
       --error-bg: #fef2f2;
       --error-border: #fecdca;
       --success: #15803d;
+      --success-bg: #ecfdf3;
+      --success-border: #bbf7d0;
       --shadow: 0 1px 2px rgba(30, 22, 53, 0.04), 0 8px 24px rgba(76, 58, 120, 0.08);
       --radius: 14px;
       --radius-sm: 10px;
     }
+
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       min-height: 100vh;
@@ -37,17 +41,20 @@
       line-height: 1.6;
       padding: 1.5rem 1.25rem 2.5rem;
     }
+
     .wrap {
       max-width: 58rem;
       margin: 0 auto;
     }
+
     .page-header {
       text-align: center;
       margin-bottom: 2rem;
-      max-width: 36rem;
+      max-width: 38rem;
       margin-left: auto;
       margin-right: auto;
     }
+
     .brand-pill {
       display: inline-block;
       font-size: 0.8rem;
@@ -61,38 +68,47 @@
       margin: 0 0 1rem;
       box-shadow: 0 1px 2px rgba(30, 22, 53, 0.06);
     }
+
     h1 {
-      font-size: clamp(1.35rem, 2.8vw, 1.75rem);
+      font-size: clamp(1.45rem, 3vw, 1.95rem);
       font-weight: 650;
       margin: 0 0 0.85rem;
       letter-spacing: -0.03em;
       color: var(--text);
       line-height: 1.25;
     }
+
     .intro {
       color: var(--muted);
       font-size: 1rem;
       margin: 0;
       line-height: 1.65;
     }
+
     .layout {
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
       gap: 1.25rem 1.5rem;
       align-items: start;
     }
+
     @media (max-width: 800px) {
       .layout {
         grid-template-columns: 1fr;
       }
-      .layout-aside { order: -1; }
+
+      .layout-aside {
+        order: -1;
+      }
     }
+
     .layout-main {
       display: flex;
       flex-direction: column;
       gap: 1.25rem;
       min-width: 0;
     }
+
     .card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -100,7 +116,11 @@
       padding: 1.35rem 1.5rem;
       box-shadow: var(--shadow);
     }
-    .card-form { padding-bottom: 1.5rem; }
+
+    .card-form {
+      padding-bottom: 1.5rem;
+    }
+
     .card-title {
       font-size: 0.72rem;
       font-weight: 700;
@@ -109,21 +129,37 @@
       color: var(--muted);
       margin: 0 0 1rem;
     }
-    .card-important .card-title { margin-bottom: 0.65rem; }
-    .field { margin-bottom: 1.35rem; }
-    .field:last-of-type { margin-bottom: 0; }
+
+    .card-important .card-title {
+      margin-bottom: 0.65rem;
+    }
+
+    .field {
+      margin-bottom: 1.35rem;
+    }
+
+    .field:last-of-type {
+      margin-bottom: 0;
+    }
+
     .field-key {
       margin-top: 0.25rem;
       padding-top: 1.5rem;
       border-top: 1px solid var(--border-soft);
     }
-    .field-hint, .field-help {
+
+    .field-hint,
+    .field-help {
       color: var(--muted);
       font-size: 0.9rem;
       margin: 0 0 0.65rem;
       line-height: 1.5;
     }
-    .field-help { margin-bottom: 0.75rem; }
+
+    .field-help {
+      margin-bottom: 0.75rem;
+    }
+
     label {
       display: block;
       font-size: 0.78rem;
@@ -133,7 +169,11 @@
       color: #433c5c;
       margin-bottom: 0.45rem;
     }
-    textarea, input[type="password"], input[type="text"] {
+
+    textarea,
+    input[type="password"],
+    input[type="text"],
+    input[type="file"] {
       width: 100%;
       padding: 0.75rem 0.85rem;
       border: 1px solid var(--border);
@@ -141,23 +181,43 @@
       background: var(--card-inner);
       color: var(--text);
       font-size: 0.875rem;
-      font-family: ui-monospace, "Cascadia Code", "Consolas", monospace;
       transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
-    textarea:focus, input[type="password"]:focus, input[type="text"]:focus {
+
+    textarea,
+    input[type="password"],
+    input[type="text"] {
+      font-family: ui-monospace, "Cascadia Code", "Consolas", monospace;
+    }
+
+    input[type="file"] {
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    textarea:focus,
+    input[type="password"]:focus,
+    input[type="text"]:focus,
+    input[type="file"]:focus {
       outline: none;
       border-color: var(--accent);
       box-shadow: 0 0 0 3px var(--accent-soft);
     }
+
     textarea {
       min-height: 10rem;
       resize: vertical;
     }
+
     .row-toggle {
       margin-top: 0.75rem;
       font-size: 0.875rem;
     }
-    .row-toggle input { vertical-align: middle; }
+
+    .row-toggle input {
+      vertical-align: middle;
+    }
+
     .row-toggle label {
       display: inline;
       text-transform: none;
@@ -168,6 +228,7 @@
       cursor: pointer;
       margin: 0;
     }
+
     .actions {
       margin-top: 1.5rem;
       padding-top: 1.35rem;
@@ -177,6 +238,7 @@
       gap: 0.65rem;
       align-items: center;
     }
+
     button {
       appearance: none;
       border: none;
@@ -190,26 +252,37 @@
       box-shadow: 0 1px 2px rgba(90, 58, 196, 0.2);
       transition: background 0.15s ease, transform 0.1s ease;
     }
-    button:hover { background: var(--accent-hover); }
-    button:active { transform: translateY(1px); }
+
+    button:hover {
+      background: var(--accent-hover);
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
     button:focus-visible {
       outline: 2px solid var(--accent);
       outline-offset: 3px;
     }
+
     button.btn-secondary {
       background: var(--card);
       color: var(--accent);
       border: 1px solid var(--border);
       box-shadow: none;
     }
+
     button.btn-secondary:hover {
       background: var(--card-inner);
       border-color: #c9c0e8;
       color: var(--accent-hover);
     }
+
     button.btn-secondary:focus-visible {
       outline-color: var(--muted);
     }
+
     .err {
       color: var(--error);
       background: var(--error-bg);
@@ -219,13 +292,35 @@
       font-size: 0.9rem;
       margin-top: 1.25rem;
     }
-    .err[hidden] { display: none; }
-    .hidden { display: none !important; }
+
+    .err[hidden] {
+      display: none;
+    }
+
+    .notice {
+      color: var(--success);
+      background: var(--success-bg);
+      border: 1px solid var(--success-border);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem 1rem;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+    }
+
+    .notice[hidden] {
+      display: none;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
     #result:not(.hidden) {
       margin-top: 1.35rem;
       padding-top: 1.35rem;
       border-top: 1px solid var(--border-soft);
     }
+
     .panel {
       border: 1px solid var(--border-soft);
       border-radius: var(--radius-sm);
@@ -233,7 +328,11 @@
       background: var(--card-inner);
       margin-bottom: 1rem;
     }
-    .panel:last-child { margin-bottom: 0; }
+
+    .panel:last-child {
+      margin-bottom: 0;
+    }
+
     .panel h2 {
       font-size: 0.72rem;
       text-transform: uppercase;
@@ -242,6 +341,16 @@
       margin: 0 0 0.85rem;
       font-weight: 700;
     }
+
+    .success-panel {
+      border-color: var(--success-border);
+      background: var(--success-bg);
+    }
+
+    .success-panel h2 {
+      color: var(--success);
+    }
+
     .msg-out {
       white-space: pre-wrap;
       word-break: break-word;
@@ -249,6 +358,7 @@
       margin: 0;
       color: var(--text);
     }
+
     dl.meta {
       margin: 0;
       display: grid;
@@ -256,31 +366,60 @@
       gap: 0.4rem 1rem;
       font-size: 0.875rem;
     }
+
     dl.meta dt {
       color: var(--muted);
       font-weight: 600;
     }
-    dl.meta dd { margin: 0; font-family: ui-monospace, monospace; word-break: break-all; color: var(--text); }
-    .match-yes { color: var(--success); font-weight: 600; }
-    .match-no { color: var(--error); font-weight: 600; }
+
+    dl.meta dd {
+      margin: 0;
+      font-family: ui-monospace, monospace;
+      word-break: break-all;
+      color: var(--text);
+    }
+
+    .match-yes {
+      color: var(--success);
+      font-weight: 700;
+    }
+
+    .match-no {
+      color: var(--error);
+      font-weight: 700;
+    }
+
     .card-important {
       padding: 1.25rem 1.5rem;
     }
+
     .security-list {
       margin: 0;
       padding-left: 1.2rem;
       color: var(--muted);
       font-size: 0.9rem;
     }
-    .security-list li { margin: 0.4rem 0; padding-left: 0.15rem; }
-    .layout-aside { min-width: 0; }
-    .card-steps .card-title { margin-bottom: 1.1rem; }
+
+    .security-list li {
+      margin: 0.4rem 0;
+      padding-left: 0.15rem;
+    }
+
+    .layout-aside {
+      min-width: 0;
+    }
+
+    .card-steps .card-title {
+      margin-bottom: 1.1rem;
+    }
+
     .steps-list {
       list-style: none;
       margin: 0;
       padding: 0;
       counter-reset: steps;
     }
+
     .steps-list li {
       display: flex;
       gap: 0.75rem;
@@ -290,7 +429,11 @@
       color: var(--text);
       line-height: 1.45;
     }
-    .steps-list li:last-child { margin-bottom: 0; }
+
+    .steps-list li:last-child {
+      margin-bottom: 0;
+    }
+
     .step-num {
       flex-shrink: 0;
       width: 1.65rem;
@@ -311,9 +454,9 @@
   <div class="wrap">
     <header class="page-header">
       <p class="brand-pill">Dear Future · Recovery Reader</p>
-      <h1>Recover your preserved message locally</h1>
+      <h1>Recover your preserved message safely</h1>
       <p class="intro">
-        This standalone reader helps you decrypt a Dear Future preserved message or letter entirely in your browser. It does not depend on the Dear Future app being online.
+        This standalone reader helps you recover a Dear Future preserved message using your recovery kit and recovery key. Everything runs locally in your browser.
       </p>
     </header>
 
@@ -321,29 +464,47 @@
       <div class="layout-main">
         <section class="card card-form">
           <div class="field">
-            <p class="field-hint">
-              Open your Dear Future Recovery Kit file and copy the JSON between START_PRESERVED_PAYLOAD_JSON and END_PRESERVED_PAYLOAD_JSON into this box.
+            <label for="kitFile">Choose your recovery kit file</label>
+            <p class="field-help">
+              Select the recovery kit text file you downloaded from your private receipt page. The reader will try to fill in the recovery details for you.
             </p>
-            <label for="payload">Preserved payload JSON</label>
-            <textarea id="payload" spellcheck="false" autocomplete="off" placeholder='Paste the full preserved payload JSON…'></textarea>
+            <input type="file" id="kitFile" accept=".txt,text/plain" />
+            <div id="fileNotice" class="notice" hidden></div>
           </div>
+
+          <div class="field">
+            <p class="field-hint">
+              If you prefer, you can also open your recovery kit file and paste its preserved record section here. The reader accepts either the full recovery kit text or just the preserved record block.
+            </p>
+            <label for="payload">Recovery kit record</label>
+            <textarea id="payload" spellcheck="false" autocomplete="off" placeholder="Paste your recovery kit record here…"></textarea>
+          </div>
+
           <div class="field field-key">
             <label for="key">Recovery key</label>
-            <p class="field-help">Paste the recovery key exactly as shown in your recovery kit file. It usually starts with dfk_v1_.</p>
+            <p class="field-help">
+              Paste the recovery key exactly as shown in your recovery kit. It usually starts with dfk_v1_.
+            </p>
             <input type="password" id="key" autocomplete="off" spellcheck="false" placeholder="dfk_v1_…" />
             <div class="row-toggle">
               <input type="checkbox" id="showKey" />
               <label for="showKey">Show recovery key</label>
             </div>
           </div>
+
           <div class="actions">
-            <button type="button" id="decryptBtn">Decrypt locally</button>
+            <button type="button" id="decryptBtn">Recover message</button>
             <button type="button" id="clearBtn" class="btn-secondary">Clear fields</button>
           </div>
 
           <div id="errorBox" class="err" hidden role="alert"></div>
 
           <div id="result" class="hidden">
+            <div class="panel success-panel">
+              <h2>Message recovered</h2>
+              <p id="recoverySummary" class="msg-out"></p>
+            </div>
+
             <div id="letterContextPanel" class="panel hidden">
               <h2>Recovered letter details</h2>
               <dl class="meta">
@@ -357,20 +518,22 @@
                 <dt>Created date</dt><dd id="outBundleCreatedAt"></dd>
               </dl>
             </div>
+
             <div class="panel">
               <h2 id="messagePanelHeading">Recovered message</h2>
               <p id="messageText" class="msg-out"></p>
             </div>
+
             <div class="panel">
-              <h2>Metadata</h2>
+              <h2>Recovery details</h2>
               <dl class="meta">
                 <dt>Message id</dt><dd id="outMessageId"></dd>
-                <dt>createdAtIso</dt><dd id="outCreatedAt"></dd>
-                <dt>visibility</dt><dd id="outVisibility"></dd>
-                <dt>revealAtIso</dt><dd id="outRevealAt"></dd>
-                <dt>contentHash</dt><dd id="outContentHash"></dd>
-                <dt>SHA-256 of decrypted data</dt><dd id="outSha256"></dd>
-                <dt>Hash match</dt><dd id="outHashMatch"></dd>
+                <dt>Created date</dt><dd id="outCreatedAt"></dd>
+                <dt>Visibility</dt><dd id="outVisibility"></dd>
+                <dt>Reveal date</dt><dd id="outRevealAt"></dd>
+                <dt>Message proof code</dt><dd id="outContentHash"></dd>
+                <dt>Recovered proof code</dt><dd id="outSha256"></dd>
+                <dt>Match result</dt><dd id="outHashMatch"></dd>
               </dl>
             </div>
           </div>
@@ -379,7 +542,7 @@
         <section class="card card-important" aria-labelledby="important-heading">
           <h2 class="card-title" id="important-heading">Important</h2>
           <ul class="security-list">
-            <li>This tool runs locally in your browser.</li>
+            <li>This reader runs locally in your browser.</li>
             <li>Your recovery key is not sent anywhere.</li>
             <li>This page does not contact Dear Future or any server.</li>
             <li>Use only on a computer you trust.</li>
@@ -391,9 +554,10 @@
         <section class="card card-steps" aria-labelledby="steps-heading">
           <h2 class="card-title" id="steps-heading">Quick steps</h2>
           <ul class="steps-list">
-            <li><span class="step-num" aria-hidden="true">1</span> Copy the preserved payload JSON</li>
-            <li><span class="step-num" aria-hidden="true">2</span> Copy your recovery key</li>
-            <li><span class="step-num" aria-hidden="true">3</span> Click Decrypt locally</li>
+            <li><span class="step-num" aria-hidden="true">1</span> Choose or paste your recovery kit</li>
+            <li><span class="step-num" aria-hidden="true">2</span> Check your recovery key is filled in</li>
+            <li><span class="step-num" aria-hidden="true">3</span> Click Recover message</li>
+            <li><span class="step-num" aria-hidden="true">4</span> Look for Match confirmed</li>
           </ul>
         </section>
       </aside>
@@ -406,10 +570,12 @@
 
   var RECOVERY_PREFIX = "dfk_v1_";
   var ENC_PREFIX = "dfenc_v2:";
+  var START_MARKER = "START_PRESERVED_PAYLOAD_JSON";
+  var END_MARKER = "END_PRESERVED_PAYLOAD_JSON";
 
   function base64UrlToBytes(str) {
     if (typeof str !== "string" || !str.length) {
-      throw new Error("Invalid base64url segment (empty).");
+      throw new Error("Invalid encoded value in the recovery kit.");
     }
     var base64 = str.replace(/-/g, "+").replace(/_/g, "/");
     var pad = base64.length % 4;
@@ -418,7 +584,7 @@
     try {
       binary = atob(base64);
     } catch (e) {
-      throw new Error("Invalid base64url encoding.");
+      throw new Error("The recovery kit contains an encoded value this reader could not understand.");
     }
     var out = new Uint8Array(binary.length);
     for (var i = 0; i < binary.length; i++) {
@@ -458,6 +624,26 @@
     return out;
   }
 
+  function extractRecordText(raw) {
+    if (typeof raw !== "string") return "";
+    var text = raw.trim();
+
+    var startIndex = text.indexOf(START_MARKER);
+    var endIndex = text.indexOf(END_MARKER);
+
+    if (startIndex !== -1 && endIndex !== -1 && endIndex > startIndex) {
+      return text.slice(startIndex + START_MARKER.length, endIndex).trim();
+    }
+
+    return text;
+  }
+
+  function extractRecoveryKey(raw) {
+    if (typeof raw !== "string") return "";
+    var match = raw.match(/dfk_v1_[A-Za-z0-9_-]+/);
+    return match ? match[0] : "";
+  }
+
   function parseRecoveryKey(raw) {
     if (typeof raw !== "string") throw new Error("Recovery key must be text.");
     var keyStr = raw.trim();
@@ -467,32 +653,39 @@
     var b64 = keyStr.slice(RECOVERY_PREFIX.length);
     var keyBytes = base64UrlToBytes(b64);
     if (keyBytes.byteLength !== 32) {
-      throw new Error("Recovery key must decode to 32 bytes (AES-256).");
+      throw new Error("Recovery key is not in the expected format.");
     }
     return keyBytes;
   }
 
   function parseEncryptedPayload(encryptedPayload) {
     if (typeof encryptedPayload !== "string") {
-      throw new Error("encryptedPayload must be a string.");
+      throw new Error("The preserved record is missing the protected message data.");
     }
+
     var s = encryptedPayload.trim();
     if (!s.startsWith(ENC_PREFIX)) {
-      throw new Error('encryptedPayload must start with "' + ENC_PREFIX + '".');
+      throw new Error("The preserved record is not in a supported Dear Future format.");
     }
+
     var rest = s.slice(ENC_PREFIX.length);
     var parts = rest.split(":");
+
     if (parts.length !== 3) {
-      throw new Error("encryptedPayload must have three segments after the prefix (iv:tag:ciphertext), all base64url.");
+      throw new Error("The preserved record is incomplete or has been changed.");
     }
+
     var iv = base64UrlToBytes(parts[0]);
     var tag = base64UrlToBytes(parts[1]);
     var ciphertext = base64UrlToBytes(parts[2]);
-    if (iv.byteLength === 0) throw new Error("IV is empty.");
-    if (tag.byteLength !== 16) throw new Error("Auth tag must be 16 bytes for AES-GCM.");
+
+    if (iv.byteLength === 0) throw new Error("The preserved record is missing required recovery data.");
+    if (tag.byteLength !== 16) throw new Error("The preserved record is not in the expected format.");
+
     var combined = new Uint8Array(ciphertext.byteLength + tag.byteLength);
     combined.set(ciphertext, 0);
     combined.set(tag, ciphertext.byteLength);
+
     return { iv: iv, ciphertextAndTag: combined };
   }
 
@@ -502,12 +695,15 @@
 
   function compareContentHash(contentHashField, digestBuffer) {
     if (contentHashField == null) {
-      return { match: false, reason: "missing", display: "(missing in payload)" };
+      return { match: false, reason: "missing", display: "(missing in recovery kit)" };
     }
+
     var ch = String(contentHashField).trim();
+
     if (!ch) {
       return { match: false, reason: "empty", display: "(empty)" };
     }
+
     var digestHex = bytesToHex(new Uint8Array(digestBuffer));
 
     var normHex = normalizeHex(ch);
@@ -536,7 +732,7 @@
 
   function safeErrorMessage(err) {
     if (err && typeof err.message === "string") return err.message;
-    return "Decryption failed.";
+    return "Recovery failed. Check your recovery kit and recovery key.";
   }
 
   function displayOrDash(value) {
@@ -549,6 +745,7 @@
     if (typeof raw !== "string") return null;
     var s = raw.trim();
     if (!s || s.charAt(0) !== "{") return null;
+
     try {
       var parsed = JSON.parse(s);
       if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return null;
@@ -562,6 +759,8 @@
     }
   }
 
+  var kitFileEl = document.getElementById("kitFile");
+  var fileNotice = document.getElementById("fileNotice");
   var payloadEl = document.getElementById("payload");
   var keyEl = document.getElementById("key");
   var showKeyEl = document.getElementById("showKey");
@@ -569,6 +768,7 @@
   var clearBtn = document.getElementById("clearBtn");
   var errorBox = document.getElementById("errorBox");
   var resultEl = document.getElementById("result");
+  var recoverySummary = document.getElementById("recoverySummary");
   var messagePanelHeading = document.getElementById("messagePanelHeading");
   var letterContextPanel = document.getElementById("letterContextPanel");
   var outBundleTitle = document.getElementById("outBundleTitle");
@@ -597,9 +797,15 @@
     errorBox.hidden = !msg;
   }
 
+  function setFileNotice(msg) {
+    fileNotice.textContent = msg;
+    fileNotice.hidden = !msg;
+  }
+
   function clearOutputs() {
     resultEl.classList.add("hidden");
     letterContextPanel.classList.add("hidden");
+    recoverySummary.textContent = "";
     outBundleTitle.textContent = "";
     outBundleRecipient.textContent = "";
     outBundleAuthor.textContent = "";
@@ -621,54 +827,102 @@
   }
 
   function clearAllFields() {
+    if (kitFileEl) kitFileEl.value = "";
     payloadEl.value = "";
     keyEl.value = "";
     showKeyEl.checked = false;
     keyEl.type = "password";
     setError("");
+    setFileNotice("");
     clearOutputs();
   }
 
-  decryptBtn.addEventListener("click", function () {
+  kitFileEl.addEventListener("change", function () {
     setError("");
+    setFileNotice("");
     clearOutputs();
 
-    var payloadText = payloadEl.value.trim();
-    var keyRaw = keyEl.value;
+    var file = kitFileEl.files && kitFileEl.files[0];
 
-    if (!payloadText) {
-      setError("Paste the preserved payload JSON.");
+    if (!file) {
       return;
     }
+
+    var reader = new FileReader();
+
+    reader.onload = function () {
+      var text = String(reader.result || "");
+      var recordText = extractRecordText(text);
+      var recoveryKey = extractRecoveryKey(text);
+
+      if (recordText) {
+        payloadEl.value = recordText;
+      }
+
+      if (recoveryKey) {
+        keyEl.value = recoveryKey;
+      }
+
+      if (recordText && recoveryKey) {
+        setFileNotice("Recovery kit loaded. Check the recovery key, then click Recover message.");
+      } else if (recordText) {
+        setFileNotice("Recovery kit record loaded. Please paste the recovery key from your kit.");
+      } else {
+        setError("We could not find the recovery details in that file. Open the kit and paste the recovery kit record manually.");
+      }
+    };
+
+    reader.onerror = function () {
+      setError("We could not read that file. Please open your recovery kit and paste the details manually.");
+    };
+
+    reader.readAsText(file);
+  });
+
+  decryptBtn.addEventListener("click", function () {
+    setError("");
+    setFileNotice("");
+    clearOutputs();
+
+    var recordText = extractRecordText(payloadEl.value);
+    var keyRaw = keyEl.value;
+
+    if (!recordText) {
+      setError("Choose your recovery kit file or paste the recovery kit record.");
+      return;
+    }
+
     if (!keyRaw.trim()) {
       setError("Enter your recovery key.");
       return;
     }
 
     var data;
+
     try {
-      data = JSON.parse(payloadText);
+      data = JSON.parse(recordText);
     } catch (e) {
-      setError("Invalid JSON: " + safeErrorMessage(e));
+      setError("We could not read the recovery kit record. Check that you copied the full record from your recovery kit.");
       return;
     }
 
     if (!data || typeof data !== "object") {
-      setError("Payload must be a JSON object.");
+      setError("The recovery kit record is not in the expected format.");
       return;
     }
 
     if (data.app !== "dear-future") {
-      setError('Unexpected app field; expected "dear-future".');
+      setError("This does not look like a Dear Future recovery kit record.");
       return;
     }
 
     if (data.protocolVersion !== 1) {
-      setError("Unsupported protocolVersion. This reader supports protocolVersion 1.");
+      setError("This recovery kit was made for a different reader version.");
       return;
     }
 
     var enc = data.encryptedPayload;
+
     try {
       var keyBytes = parseRecoveryKey(keyRaw);
       var parsed = parseEncryptedPayload(enc);
@@ -712,25 +966,34 @@
         outVisibility.textContent = data.visibility != null ? String(data.visibility) : "—";
         outRevealAt.textContent =
           data.revealAtIso === null || data.revealAtIso === undefined
-            ? "null"
+            ? "—"
             : String(data.revealAtIso);
+
         outContentHash.textContent =
           data.contentHash != null && String(data.contentHash).trim() !== ""
             ? String(data.contentHash)
             : "—";
+
         outSha256.textContent = shaHex;
 
         outHashMatch.textContent = cmp.match
-          ? "Yes — decrypted data matches the preserved fingerprint."
-          : "No — decrypted data does not match the preserved fingerprint.";
+          ? "Match confirmed — the recovered message matches the saved proof code."
+          : "Match not confirmed — the recovered message does not match the saved proof code.";
+
         outHashMatch.className = cmp.match ? "match-yes" : "match-no";
+
+        recoverySummary.textContent = cmp.match
+          ? "Your message was recovered successfully. Match confirmed."
+          : "Your message was recovered, but the match could not be confirmed. Check that you used the correct recovery kit and recovery key.";
 
         resultEl.classList.remove("hidden");
       }).catch(function (e) {
         var msg = safeErrorMessage(e);
+
         if (/OperationError|decrypt/i.test(String(e && e.name))) {
-          msg = "Decryption failed. Check your recovery key and that the payload matches this key.";
+          msg = "Recovery failed. Check that the recovery key belongs to this recovery kit.";
         }
+
         setError(msg);
       });
     } catch (e) {
