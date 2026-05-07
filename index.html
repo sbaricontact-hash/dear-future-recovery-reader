@@ -474,7 +474,9 @@
 
           <div class="field">
             <p class="field-hint">
-              If you prefer, you can also open your recovery kit file and paste its preserved record section here. The reader accepts either the full recovery kit text or just the preserved record block.
+              <p class="field-hint">
+                If you prefer, open your recovery kit file and copy everything between START_PRESERVED_PAYLOAD_JSON and END_PRESERVED_PAYLOAD_JSON into this box. You can also paste the full recovery kit text and the reader will try to find the record.
+              </p>
             </p>
             <label for="payload">Recovery kit record</label>
             <textarea id="payload" spellcheck="false" autocomplete="off" placeholder="Paste your recovery kit record here…"></textarea>
@@ -625,18 +627,35 @@
   }
 
   function extractRecordText(raw) {
-    if (typeof raw !== "string") return "";
-    var text = raw.trim();
+  if (typeof raw !== "string") return "";
 
-    var startIndex = text.indexOf(START_MARKER);
-    var endIndex = text.indexOf(END_MARKER);
+  var text = raw.trim();
+  if (!text) return "";
 
-    if (startIndex !== -1 && endIndex !== -1 && endIndex > startIndex) {
-      return text.slice(startIndex + START_MARKER.length, endIndex).trim();
+  var lines = text.split(/\r?\n/);
+  var startLine = -1;
+  var endLine = -1;
+
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i].trim();
+
+    if (line === START_MARKER && startLine === -1) {
+      startLine = i;
+      continue;
     }
 
-    return text;
+    if (line === END_MARKER && startLine !== -1) {
+      endLine = i;
+      break;
+    }
   }
+
+  if (startLine !== -1 && endLine !== -1 && endLine > startLine) {
+    return lines.slice(startLine + 1, endLine).join("\n").trim();
+  }
+
+  return text;
+}
 
   function extractRecoveryKey(raw) {
     if (typeof raw !== "string") return "";
